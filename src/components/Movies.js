@@ -5,7 +5,7 @@ import Moment from 'react-moment';
 
 
 export default function Movies(props) {
-    const { toggle, movies, searchedMovies } = props
+    const { toggle, state: { movies, searchedMovies } } = props
 
     let currentMovies = () => {
         if (searchedMovies.length > 0) {
@@ -14,7 +14,6 @@ export default function Movies(props) {
             return movies
         }
     }
-
 
     return (
         <Card>

@@ -6,18 +6,16 @@ export default function NavBar(props) {
     const {
         dispatch,
         state: {
+            movies,
             activeCategory,
             category,
             searchTerm,
             discover,
             search,
-            genreName
+            searchedMovies,
         },
-        parseCategory,
         searchMovie,
-        movies,
-        searchedMovies,
-        setSearchedMovies
+        parseCategory,
     } = props
 
     const onSearch = (e) => {
@@ -30,9 +28,8 @@ export default function NavBar(props) {
         function handleCategory(pickedCategory) {
             dispatch({
                 type: 'handleCategory',
-                category: `/${pickedCategory}`
+                category: `/${pickedCategory}`,
             })
-            setSearchedMovies([])
         }
         return (
             <>
@@ -49,27 +46,42 @@ export default function NavBar(props) {
         if (searchTerm.length > 0) {
             const sortedMovies = searchedMovies.sort((a, b) => a.popularity - b.popularity)
             const movieArr = [].concat(sortedMovies)
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movieArr)
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movieArr
+            })
         }
         else if (category) {
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movies.sort((a, b) => a.popularity - b.popularity))
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movies.sort((a, b) => a.popularity - b.popularity)
+            })
         } else {
             dispatch({ type: 'sort', condition: 'two', sortBy: 'popularity.asc', activeCategory: categoryName })
         }
     }
 
     function sortMostPopularMovie(categoryName) {
-        // setState({ ...state, activeCategory: categoryName })
         if (searchTerm.length > 0) {
             const sortedMovies = searchedMovies.sort((a, b) => b.popularity - a.popularity)
             const movieArr = [].concat(sortedMovies)
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movieArr)
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movieArr
+            })
         } else if (category) {
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movies.sort((a, b) => b.popularity - a.popularity))
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movies.sort((a, b) => b.popularity - a.popularity)
+            })
         } else {
             dispatch({ type: 'sort', condition: 'two', sortBy: 'popularity.desc', activeCategory: categoryName })
         }
@@ -79,26 +91,41 @@ export default function NavBar(props) {
         if (searchTerm.length > 0) {
             const sortedMovies = searchedMovies.sort((a, b) => a.vote_average - b.vote_average)
             const movieArr = [].concat(sortedMovies)
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movieArr)
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movieArr
+            })
         } else if (category) {
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movies.sort((a, b) => a.vote_average - b.vote_average))
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movies.sort((a, b) => a.vote_average - b.vote_average)
+            })
         } else {
             dispatch({ type: 'sort', condition: 'two', sortBy: 'vote_average.asc', activeCategory: categoryName })
         }
     }
 
     function sortHighestRatedMovie(categoryName) {
-        // setState({ ...state, activeCategory: categoryName })
         if (searchTerm.length > 0) {
             const sortedMovies = searchedMovies.sort((a, b) => b.vote_average - a.vote_average)
             const movieArr = [].concat(sortedMovies)
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movieArr)
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movieArr
+            })
         } else if (category) {
-            dispatch({ type: 'sort', condition: 'one', activeCategory: categoryName })
-            setSearchedMovies(movies.sort((a, b) => b.vote_average - a.vote_average))
+            dispatch({
+                type: 'sort',
+                condition: 'one',
+                activeCategory: categoryName,
+                searchedMovies: movies.sort((a, b) => b.vote_average - a.vote_average)
+            })
         } else {
             dispatch({ type: 'sort', condition: 'two', sortBy: 'vote_average.desc', activeCategory: categoryName })
         }
