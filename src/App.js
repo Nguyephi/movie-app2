@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Dropdown, NavDropdown, Modal } from 'react-bootstrap'
+import React, { useState, useEffect, useReducer } from 'react';
+import { Dropdown, NavDropdown, Modal } from 'react-bootstrap'
 import YouTube from "react-youtube";
 import './App.css';
 
@@ -17,10 +17,77 @@ const opts = {
 }
 
 function App(props) {
-  const [state, setState] = useState(
-    {
-      movies: [],
-      allMovies: [],
+  const [movies, setMovies] = useState([])
+  const [searchedMovies, setSearchedMovies] = useState([])
+  const [allSearchedMovies, setAllSearchedMovies] = useState([])
+  const [state, dispatch] = useReducer((state, action) => {
+    switch (action.type) {
+      case 'genreName': return {
+        ...state,
+        genreName: action.genreName
+      }
+      case 'getGenresAllMovies': return {
+        ...state,
+        genre: action.genre,
+        genreName: action.genreName
+      }
+      case 'searchMovie': return {
+        ...state,
+        activeCategory: '',
+        category: '',
+        search: '',
+        searchTerm: action.searchTerm
+      }
+      case 'getGenres': return {
+        ...state, genres: action.genres
+      }
+      case 'modal': return {
+        ...state,
+        modal: true,
+        trailerId: action.trailerId,
+        trailerTitle: action.trailerTitle
+      }
+      case 'closeModal': return { ...state, modal: false }
+      case 'search': return {
+        ...state,
+        discover: action.discover
+      }
+      case 'sort':
+        switch (action.condition) {
+          case 'one': return {
+            ...state,
+            activeCategory: action.activeCategory
+          }
+          case 'two': return {
+            ...state,
+            sortBy: action.sortBy,
+            activeCategory: action.activeCategory
+          }
+        }
+      case 'handleCategory': return {
+        ...state,
+        category: action.category,
+        discover: '',
+        genreName: '',
+        search: '',
+        searchTerm: '',
+        activeCategory: '',
+      }
+      case 'searchInput': return {
+        ...state,
+        search: action.search
+      }
+      case 'years': return {
+        ...state,
+        years: action.years
+      }
+      case 'ratings': return {
+        ...state,
+        ratings: action.ratings
+      }
+      default: return state
+    }
+  }, {
       search: '',
       searchTerm: '',
       genre: '',
@@ -28,39 +95,49 @@ function App(props) {
       genres: [],
       sortBy: 'popularity.desc',
       activeCategory: '',
-      searchedMovies: [],
-      allSearchedMovies: [],
-      years: { min: 1874, max: 2019 },
-      ratings: { min: 0, max: 10 },
       discover: '/discover',
       category: '',
       modal: false,
       trailerId: '',
       trailerTitle: '',
-      testing: false
+      years: { min: 1874, max: 2019 },
+      ratings: { min: 0, max: 10 },
     })
 
-  // const {
-  //   movies,
-  //   searchTerm,
-  //   genre,
-  //   genreName,
-  //   genres,
-  //   sortBy,
-  //   activeCategory,
-  //   searchedMovies,
-  //   allSearchedMovies,
-  //   years,
-  //   ratings,
-  //   discover,
-  //   category,
-  //   modal,
-  //   trailerId,
-  //   trailerTitle,
-  //   testing
-  // } = state
+  function BreadCrumbs() {
+    return (
+      <>
+        <div className='d-flex mt-2 pl-4'>
+          {state.searchTerm || state.category ? <div>Search: {state.searchTerm || parseCategory()}</div> : <div>All Movies</div>}
+          {state.genreName && <div className='pl-1'>> {state.genreName}</div>}
+          {state.activeCategory && <div className='pl-1'>> {state.activeCategory}</div>}
+          <div className='pl-1'>({searchedMovies.length || 20})</div>
+        </div>
+      </>
+    )
+  }
 
-
+  function TrailerModal() {
+    return (
+      <Modal
+        size="lg"
+        show={state.modal}
+        onHide={toggle}
+      >
+        <Modal.Header
+          closeButton
+        >
+          {state.trailerTitle}
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <YouTube
+            videoId={state.trailerId}
+            opts={opts}
+          />
+        </Modal.Body>
+      </Modal>
+    )
+  }
 
   const parseCategory = () => {
     if (state.category === '/now_playing' || state.category === '/top_rated') {
@@ -76,31 +153,21 @@ function App(props) {
       return link
     }
   }
-  console.log('globalll', state.genreName);
-  console.log('globalll', state.category);
   const getMovies = async () => {
-    console.log('locallllll', state.genreName);
-    console.log('locallllll', state.category);
     const res = await fetch(`https://api.themoviedb.org/3${state.discover}/movie${state.category}?api_key=${API_KEY}&language=en-US&page=1&sort_by=${state.sortBy}&primary_release_date.gte=${state.years.min}-1-1&primary_release_date.lte=${state.years.max}-12-31&vote_average.gte=${state.ratings.min}&vote_average.lte=${
       state.ratings.max
       }&with_genres=${state.genre}`)
     const jsonData = await res.json()
-    setState({
-      ...state,
-      movies: jsonData.results,
-      allMovies: jsonData.results
-    })
+    setMovies(jsonData.results)
   }
 
-  // console.log('222', state.genreName);
-
   const currentMovies = () => {
-    if (state.searchedMovies.length === 20) {
-      return state.searchedMovies
+    if (searchedMovies.length === 20) {
+      return searchedMovies
     } else if (state.searchTerm) {
-      return state.allSearchedMovies
+      return allSearchedMovies
     } else {
-      return state.movies
+      return movies
     }
   }
 
@@ -117,21 +184,22 @@ function App(props) {
         alert(`No ${lowerGenreName} genre in your search: ${capSearchTerm}`)
       }
       else {
-        setState({
-          ...state,
-          genreName: genre.name,
-          searchedMovie: filterByGenres
+        dispatch({
+          type: 'genreName',
+          genreName: genre.name
         })
+        setSearchedMovies(filterByGenres)
       }
     }
     else {
-      setState({
-        ...state,
+      dispatch({
+        type: 'getGenresAllMovies',
         genre: genre.id,
-        genreName: genre.name,
+        genreName: genre.name
       })
     }
   }
+
   const mapGenres = () => {
     return state.genres.map(genre => {
       return (
@@ -144,7 +212,7 @@ function App(props) {
 
   useEffect(() => {
     getMovies()
-  }, [state.category, state.searchedMovies, state.genre, state.years, state.ratings, state.sortBy, state.testing])
+  }, [state.category, searchedMovies, state.genre, state.years, state.ratings, state.sortBy])
 
   const searchMovie = async (query) => {
     if (query) {
@@ -153,18 +221,15 @@ function App(props) {
       if (jsonData.total_results === 0) {
         alert('No movies with this title.')
       } else {
-        let filtered = state.movies.filter(
+        let filtered = movies.filter(
           movie =>
             movie.title.toLowerCase().includes(query.toLowerCase())
         )
         let result = jsonData.results || filtered;
-        setState({
-          ...state,
-          searchedMovies: result,
-          // allSearchedMovies: result,
-          activeCategory: '',
-          category: '',
-          search: '',
+        setSearchedMovies(result)
+        setAllSearchedMovies(result)
+        dispatch({
+          type: 'searchMovie',
           searchTerm: query
         })
       }
@@ -176,7 +241,7 @@ function App(props) {
   const getGenres = async () => {
     const res = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=en-US`)
     const jsonData = await res.json()
-    setState({ ...state, genres: jsonData.genres })
+    dispatch({ type: 'getGenres', genres: jsonData.genres })
   }
 
   const getTrailerKey = async movieId => {
@@ -185,9 +250,8 @@ function App(props) {
         `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
       );
       const jsonData = await response.json();
-      setState({
-        ...state,
-        modal: true,
+      dispatch({
+        type: 'modal',
         trailerId: jsonData.results[0].key,
         trailerTitle: jsonData.results[0].name
       })
@@ -200,73 +264,46 @@ function App(props) {
     if (!state.modal) {
       getTrailerKey(movieId);
     } else {
-      setState({ ...state, modal: false })
+      dispatch({ type: 'closeModal' })
     }
   };
-
-  const test = () => {
-    setState({ ...state, testing: !state.testing })
-  }
 
   return (
     <div className="container p-0 movieApp" >
       <NavBar
         {...{
           state,
-          setState,
+          dispatch,
+          movies,
+          searchedMovies,
+          setSearchedMovies,
           parseCategory,
-          searchMovie,
-          test
+          searchMovie
         }}
       />
-      <div className='d-flex mt-2 pl-4'>
-        {state.searchTerm || state.category ? <div>Search: {state.searchTerm || parseCategory()}</div> : <div>All Movies</div>}
-        {state.genreName && <div className='pl-1'>> {state.genreName}</div>}
-        {state.activeCategory && <div className='pl-1'>> {state.activeCategory}</div>}
-        <div className='pl-1'>({state.searchedMovies.length || 20})</div>
-      </div>
-      <div className='row mt-2 pl-4 pr-4'>
+      <BreadCrumbs />
+      <div className='row mt-2 pl-4 pr-4 movies'>
         <div className='col-lg-9'>
-          <Card>
-            <Movies
-              {...{
-                state,
-                toggle
-              }}
-            />
-          </Card>
+          <Movies
+            {...{
+              movies,
+              searchedMovies,
+              toggle
+            }}
+          />
         </div>
         <div className='col-lg-3'>
           <RightSideFilter
             {...{
               state,
-              setState,
+              dispatch,
               getGenres,
-              handleGenre,
-              mapGenres,
-              test
+              mapGenres
             }}
           />
-          <Modal
-            size="lg"
-            show={state.modal}
-            onHide={toggle}
-          >
-            <Modal.Header
-              closeButton
-            >
-              {state.trailerTitle}
-            </Modal.Header>
-            <Modal.Body className="text-center">
-              <YouTube
-                videoId={state.trailerId}
-                opts={opts}
-              />
-            </Modal.Body>
-          </Modal>
         </div>
-
       </div >
+      <TrailerModal />
     </div>
   );
 }

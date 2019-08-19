@@ -1,30 +1,23 @@
 import React from 'react'
-import { DropdownButton, Dropdown, Button } from 'react-bootstrap'
+import { DropdownButton } from 'react-bootstrap'
 import InputRange from "react-input-range";
 import "react-input-range/lib/css/index.css";
 
 export default function RightSideFilter(props) {
     const {
-        state,
-        state: { movies,
-            searchedMovies,
-            allSearchedMovies,
-            genres,
-            category,
+        dispatch,
+        state: {
             searchTerm,
             genreName,
             years,
             ratings,
             discover },
-        setState,
         getGenres,
-        mapGenres,
-        test
+        mapGenres
     } = props
 
     return (
         <>
-            <Button onClick={() => test()}>Test</Button>
             <div className='pb-3 text-center'>filter by genre:</div>
             <DropdownButton
                 className='genres'
@@ -34,21 +27,21 @@ export default function RightSideFilter(props) {
             >
                 {mapGenres()}
             </DropdownButton>
-            {discover !== '' &&
+            {discover !== '' && searchTerm.length == 0 &&
                 <>
                     <div className='pb-3 text-center mt-4'>filter by year:</div>
                     <InputRange
                         maxValue={2019}
                         minValue={1874}
                         value={years}
-                        onChange={year => setState({ ...state, years: year })}
+                        onChange={year => dispatch({ type: 'years', years: year })}
                     />
                     <div className='pb-3 text-center mt-2'>filter by rating:</div>
                     <InputRange
                         maxValue={10}
                         minValue={0}
                         value={ratings}
-                        onChange={rating => setState({ ...state, ratings: rating })}
+                        onChange={rating => dispatch({ type: 'ratings', ratings: rating })}
                     />
                 </>}
         </>
