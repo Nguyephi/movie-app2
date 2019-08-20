@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { Pagination, Modal } from 'react-bootstrap'
 import YouTube from "react-youtube";
 import './App.css';
@@ -34,6 +34,10 @@ function App(props) {
         ...state,
         genre: action.genre,
         genreName: action.genreName
+      }
+      case 'search': return {
+        ...state,
+        discover: '/discover'
       }
       case 'searchMovie': return {
         ...state,
@@ -241,7 +245,6 @@ function App(props) {
     if (query) {
       const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}&page=1`);
       const jsonData = await response.json();
-      console.log(jsonData)
       if (jsonData.total_results === 0) {
         alert('No movies with this title.')
       } else {

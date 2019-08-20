@@ -21,7 +21,7 @@ export default function NavBar(props) {
     const onSearch = (e) => {
         e.preventDefault()
         searchMovie(search)
-        dispatch({ type: 'search', discover: '/discover' })
+        dispatch({ type: 'search' })
     }
 
     const handleCategories = () => {
