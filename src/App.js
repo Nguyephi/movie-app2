@@ -225,9 +225,7 @@ function App(props) {
   }
 
   const getMovies = async (page) => {
-    const res = await fetch(`https://api.themoviedb.org/3${state.discover}/movie${state.category}?api_key=${API_KEY}&language=en-US&page=${page}&sort_by=${state.sortBy}&primary_release_date.gte=${state.years.min}-1-1&primary_release_date.lte=${state.years.max}-12-31&vote_average.gte=${state.ratings.min}&vote_average.lte=${
-      state.ratings.max
-      }&with_genres=${state.genre}`)
+    const res = await fetch(`https://api.themoviedb.org/3${state.discover}/movie${state.category}?api_key=${API_KEY}&language=en-US&page=${page}&sort_by=${state.sortBy}&with_genres=${state.genre}`)
     const jsonData = await res.json()
     console.log('ressssssss', jsonData)
     dispatch({

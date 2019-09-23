@@ -70,7 +70,7 @@ export default function RightSideFilter(props) {
             >
                 {mapGenres()}
             </DropdownButton>
-            {discover !== '' && searchTerm.length == 0 &&
+            {/* {discover !== '' && searchTerm.length == 0 &&
                 <>
                     <div className='pb-3 text-center mt-4'>filter by year:</div>
                     <InputRange
@@ -86,7 +86,7 @@ export default function RightSideFilter(props) {
                         value={ratings}
                         onChange={rating => dispatch({ type: 'ratings', ratings: rating })}
                     />
-                </>}
+                </>} */}
         </>
     )
 }
