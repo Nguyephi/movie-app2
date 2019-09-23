@@ -1,4 +1,4 @@
-# CoderSchool FTW - * Name of Your Project Here *
+# * Phil's Movies *
 
 Created with love by: `Philip Nguyen`
 
@@ -20,30 +20,11 @@ To create a GIF, use [LiceCap](http://www.cockos.com/licecap/), [RecordIt](http:
 
 The following **required** functionalities are completed (this is a sample):
 
-* [x] Top navigation bar with dropdown buttons
-* [x] Banner with background image, white text, and a green button
-* [x] Color or text change when mouse hovers over
-* [x] At least 3 different body sections with different background images or colors
-* [x] 2 (or 3) card items per row in a body section
-* [x] Footer with social icons that link to the actual social pages
-
-The following **optional** features are implemented:
-
-* [x] Add favicon to the page
-* [ ] Animation on an element
-* [ ] Navigation, contact, sitemap, privacy policy, term of use, etc in footer
-* [ ] Bootstrap carousel for banner
-* [ ] Banner with background video
-
-The following **additional** features are implemented:
-
-* [x] List anything else that you can get done to improve the page!
-
-## Time Spent and Lessons Learned
-
-Time spent: **X** hours spent in total.
-
-Describe any challenges encountered while building the app.
+* [x] Using api
+* [x] Learn about async function
+* [x] Map through an array of movie data
+* [x] Use reacts new hook feature
+* [ ] Finish the pagination
 
 ## License
 
@@ -63,13 +44,3 @@ limitations under the License.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
