@@ -8,6 +8,7 @@ import Movies from './components/Movies'
 import RightSideFilter from './components/RightSideFilter'
 
 const API_KEY = process.env.REACT_APP_MOVIE_API_KEY
+
 const opts = {
   height: "420",
   width: "100%",
@@ -101,26 +102,26 @@ function App(props) {
       default: return state
     }
   }, {
-      movies: [],
-      searchedMovies: [],
-      allSearchedMovies: [],
-      search: '',
-      searchTerm: '',
-      genre: '',
-      genreName: '',
-      genres: [],
-      sortBy: 'popularity.desc',
-      activeCategory: '',
-      discover: '/discover',
-      category: '',
-      modal: false,
-      trailerId: '',
-      trailerTitle: '',
-      years: { min: 1874, max: 2019 },
-      ratings: { min: 0, max: 10 },
-      totalPages: '',
-      pageNo: 1
-    })
+    movies: [],
+    searchedMovies: [],
+    allSearchedMovies: [],
+    search: '',
+    searchTerm: '',
+    genre: '',
+    genreName: '',
+    genres: [],
+    sortBy: 'popularity.desc',
+    activeCategory: '',
+    discover: '/discover',
+    category: '',
+    modal: false,
+    trailerId: '',
+    trailerTitle: '',
+    years: { min: 1874, max: 2019 },
+    ratings: { min: 0, max: 10 },
+    totalPages: '',
+    pageNo: 1
+  })
 
   function BreadCrumbs() {
     return (
@@ -157,47 +158,46 @@ function App(props) {
     )
   }
 
-  function MoviePagination() {
-    console.log('object', state.totalPages);
-    let pages = Array.from(Array(state.totalPages).keys())
-    // pages = pages.shift()
-    console.log(pages.shift())
-    const pageMap = () => pages.map(page => {
-      if (page <= state.pageNo + 3 && page >= state.pageNo - 3) {
-        return (
-          <Pagination.Item
-            active={page === state.pageNo}
-            onClick={() => getMovies(page)}
-          >
-            {page}
-          </Pagination.Item>
-        );
-      }
-    })
-    return (
-      // totalpages cant exceed 500 for all movies. need a conditional for searched and category movies
-      <Pagination>
-        <Pagination.First onClick={() => getMovies(1)} />
-        <Pagination.Prev
-          disabled={state.pageNo === 1}
-          onClick={() => getMovies(state.pageNo - 1)}
-        />
-        {pageMap()}
-        <Pagination.Next
-          disabled={
-            state.pageNo === Math.max(state.totalPages, 500)
-          }
-          onClick={() => getMovies(state.pageNo + 1)}
-        />
-        <Pagination.Last
-          onClick={() =>
-            getMovies(Math.max(state.totalPages, 500))
-          }
-        />
-      </Pagination>
-    )
+  // function MoviePagination() {
+  //   console.log('object', state.totalPages);
+  //   let pages = Array.from(Array(state.totalPages).keys())
+  //   console.log(pages.shift())
+  //   const pageMap = () => pages.map(page => {
+  //     if (page <= state.pageNo + 3 && page >= state.pageNo - 3) {
+  //       return (
+  //         <Pagination.Item
+  //           active={page === state.pageNo}
+  //           onClick={() => getMovies(page)}
+  //         >
+  //           {page}
+  //         </Pagination.Item>
+  //       );
+  //     }
+  //   })
+  //   return (
+  //     // totalpages cant exceed 500 for all movies. need a conditional for searched and category movies
+  //     <Pagination>
+  //       <Pagination.First onClick={() => getMovies(1)} />
+  //       <Pagination.Prev
+  //         disabled={state.pageNo === 1}
+  //         onClick={() => getMovies(state.pageNo - 1)}
+  //       />
+  //       {pageMap()}
+  //       <Pagination.Next
+  //         disabled={
+  //           state.pageNo === Math.max(state.totalPages, 500)
+  //         }
+  //         onClick={() => getMovies(state.pageNo + 1)}
+  //       />
+  //       <Pagination.Last
+  //         onClick={() =>
+  //           getMovies(Math.max(state.totalPages, 500))
+  //         }
+  //       />
+  //     </Pagination>
+  //   )
 
-  }
+  // }
 
   const parseCategory = () => {
     if (state.category === '/now_playing' || state.category === '/top_rated') {
@@ -229,6 +229,7 @@ function App(props) {
       state.ratings.max
       }&with_genres=${state.genre}`)
     const jsonData = await res.json()
+    console.log('ressssssss', jsonData)
     dispatch({
       type: 'getMovies',
       movies: jsonData.results,
@@ -307,7 +308,7 @@ function App(props) {
         }}
       />
       <BreadCrumbs />
-      <MoviePagination />
+      {/* <MoviePagination /> */}
       <div className='row mt-2 pl-4 pr-4 movies'>
         <div className='col-lg-9'>
           <Movies
