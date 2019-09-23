@@ -2,7 +2,7 @@
 
 Created with love by: `Philip Nguyen`
 
-View online at: `Your URL here`
+View online at: `https://phils-movies.netlify.com/`
 
 One or two sentence summary of your project. 
 
